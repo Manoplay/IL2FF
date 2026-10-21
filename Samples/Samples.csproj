@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Samples</AssemblyName>
+        <RootNamespace>Samples</RootNamespace>
+        <Company>Manoplay</Company>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Enums\Enums.csproj" />
+      <ProjectReference Include="..\Native\Native.csproj" />
+      <Reference Include="..\SeguedEngine.dll" />
+      <Reference Include="LittleBigPlanet">
+        <HintPath>..\LittleBigPlanet.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

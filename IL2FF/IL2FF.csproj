@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>IL2FF</AssemblyName>
+        <RootNamespace>IL2FF</RootNamespace>
+        <Authors>Manoplay</Authors>
+        <Company>Manoplay</Company>
+        <Product>IL2FF</Product>
+        <NeutralLanguage>en</NeutralLanguage>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FishLib\FishLib.csproj" />
+      <ProjectReference Include="..\Native\Native.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CwLibNet" Version="1.0.0" />
+      <PackageReference Include="Mono.Cecil" Version="0.11.6" />
+    </ItemGroup>
+
+</Project>

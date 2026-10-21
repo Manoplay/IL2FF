@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Company>Manoplay</Company>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <Optimize>True</Optimize>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="cwlibnet" Version="1.0.0" />
+    </ItemGroup>
+
+</Project>
