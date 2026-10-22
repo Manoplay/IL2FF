@@ -44,3 +44,12 @@ public class Sample: Thing {}
 ```
 il2ff.exe compile <path-to-assembly> [output-directory]
 ```
+
+## Credits
+I almost forgot that section in the first commit of the project. There are some people I really wish to thank for the existence of the project.
+* ennuo - thanks for the magical Toolkit
+* Beyley - most of the code is inspired by ZishZingers
+* Apple - most of the FishLib project (the library for handling FishFingers files) is inspired to a his private project and the idea of working with Dotnet would never have existed without him. And yes, many functions are just theirs.
+* Disko - for providing base code for CwLibNet.
+
+So a big **Thank you** is for the people mentioned here! Without you, the project would have never existed.
