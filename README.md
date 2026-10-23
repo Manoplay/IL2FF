@@ -11,6 +11,18 @@ IL2FF is a .NET to LittleBigPlanet (FF) transpiler.
 * Native:  Classes and attributes used in scripts
 * Samples: Some samples to demonstrate IL2FF capabilities
 
+## Build
+This project depends on [CwLibNet](https://github.com/Manoplay/CwLibNet), which must be added to the project through NuGet (GitHub registry) or direct assembly reference. If you manually built CwLibNet, you will need to manually reference CwLibNet.dll from the projects that depends on it, which are `FishLib` and `IL2FF`.
+
+After that, in order to build that, it should be sufficient to:
+```bash
+dotnet build
+```
+in the project root directory.
+
+> [!NOTE]
+> If you decide to install CwLibNet from the GitHub registry, the detailed guide is provided by GitHub itself at that [link](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#installing-a-package).
+
 ## Usage
 Being a dotnet project, it can be invoked:
 - using dotnet cli: `dotnet run --project IL2FF -- <args>`
