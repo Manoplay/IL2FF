@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Native", "Native\Native.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enums", "Enums\Enums.csproj", "{19C26592-8CC5-42B6-B174-82BAD10E85B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CwLibNet", "CwLibNet\CwLibNet\CwLibNet.csproj", "{9A835180-D608-44CD-9C2C-82977E3BA1E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{19C26592-8CC5-42B6-B174-82BAD10E85B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19C26592-8CC5-42B6-B174-82BAD10E85B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19C26592-8CC5-42B6-B174-82BAD10E85B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A835180-D608-44CD-9C2C-82977E3BA1E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A835180-D608-44CD-9C2C-82977E3BA1E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A835180-D608-44CD-9C2C-82977E3BA1E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A835180-D608-44CD-9C2C-82977E3BA1E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,7 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CwLibNet" Version="1.0.0" />
       <PackageReference Include="Mono.Cecil" Version="0.11.6" />
     </ItemGroup>
 

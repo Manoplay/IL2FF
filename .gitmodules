@@ -1,0 +1,3 @@
+[submodule "CwLibNet"]
+	path = CwLibNet
+	url = https://github.com/Manoplay/CwLibNet
