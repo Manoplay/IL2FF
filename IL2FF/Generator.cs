@@ -49,10 +49,15 @@ public static class Generator
         WriteScript(type);
 
         var resources = new HashSet<ResourceDescriptor>();
+        var selfGuid = _script.Self?.GetGUID()?.Value;
         _script.TypeReferences.ForEach(reference =>
         {
             if (reference.Script != null)
+            {
+                if (selfGuid.HasValue && reference.Script.GetGUID()?.Value == selfGuid.Value)
+                    return;
                 resources.Add(reference.Script);
+            }
         });
 
         _script.Export();
@@ -66,7 +71,11 @@ public static class Generator
         {
             Directory.CreateDirectory(parentDir);
         }
-        var compressedBytes = _script.CompressResource(resources);
+        var orderedResources = resources
+            .OrderBy(r => r.GetResourceType().Value)
+            .ThenBy(r => r.GetGUID()?.Value ?? 0)
+            .ToHashSet();
+        var compressedBytes = _script.CompressResource(orderedResources);
         if (compressedBytes == null)
         {
             throw new InvalidOperationException($"Resource compression failed for {type.FullName}.");
@@ -132,7 +141,7 @@ public static class Generator
         var baseGuid = type.BaseType != null ? TypeReference.GetGuidValue(type.BaseType.Resolve()) : "0";
 
         _script.Self = TypeReference.CreateScriptDescriptor(typeGuid);
-        _script.UpToDateScript = TypeReference.CreateScriptDescriptor(typeGuid);
+        _script.UpToDateScript = null;
         _script.SuperClassScript = baseGuid != "0" ? TypeReference.CreateScriptDescriptor(baseGuid) : null;
         _script.Name = type.Name;
         var classModifiers = Modifiers.PUBLIC;
@@ -312,7 +321,7 @@ public static class Generator
         if (method.IsFamily) methodModifiers |= Modifiers.PROTECTED;
         if (method.IsStatic) methodModifiers |= Modifiers.STATIC;
         if (method.IsVirtual) methodModifiers |= Modifiers.VIRTUAL;
-        if (method.IsReuseSlot) methodModifiers |= Modifiers.OVERRIDE;
+        if (method.IsVirtual && method.IsReuseSlot) methodModifiers |= Modifiers.OVERRIDE;
         if (method.IsAbstract) methodModifiers |= Modifiers.ABSTRACT;
 
         if (method.HasCustomAttributes)
@@ -403,7 +412,7 @@ public static class Generator
     {
         internal MachineType GetFishType()
     {
-        if (TypeReference.IsStringType(type) || type.Name is "Resource" || type.FullName is "LittleBigPlanet.Resource" || TypeReference.GetGuidValue(type) == "12055")
+        if (TypeReference.IsStringType(type) || type.Name is "Resource" || type.FullName is "LittleBigPlanet.Resource" || TypeReference.GetGuidValue(type) == "12055" || type.Name is "Gooey" || type.FullName is "LittleBigPlanet.Gooey" || TypeReference.GetGuidValue(type) == "16048")
         {
             return MachineType.OBJECT;
         }
@@ -418,6 +427,7 @@ public static class Generator
         {
             "System.Void" => MachineType.VOID,
             "System.Int32" => MachineType.S32,
+            "System.UInt32" => MachineType.S32,
             "System.Int64" => MachineType.S64,
             "System.Single" => MachineType.F32,
             "System.Double" => MachineType.F64,
@@ -562,7 +572,7 @@ public static class Generator
 
         var isBuiltInValueType = type.Name switch
         {
-            "Void" or "Boolean" or "Char" or "Int32" or "Single" or "Double" or "Int64" when type.Namespace == "System" => true, // CIL types
+            "Void" or "Boolean" or "Char" or "Int32" or "UInt32" or "Single" or "Double" or "Int64" when type.Namespace == "System" => true, // CIL types
             "Vec2" or "Vec3" or "Vec4" or "Vector2" or "Vector3" or "Vector4" or "Matrix4x4" when type.Namespace == "Fisher" => true, // custom types
             _ => false
         };
@@ -581,6 +591,7 @@ public static class Generator
             {
                 "Char" => FishType.CHAR,
                 "Int32" => FishType.INT,
+                "UInt32" => FishType.GUID,
                 "Single" => FishType.FLOAT,
                 "Double" => FishType.DOUBLE,
                 "Int64" => FishType.LONG,

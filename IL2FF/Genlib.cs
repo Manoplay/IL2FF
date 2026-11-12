@@ -11,6 +11,7 @@ using Mono.Cecil;
 using FieldAttributes = System.Reflection.FieldAttributes;
 using Guid = Fisher.Guid;
 using MethodAttributes = System.Reflection.MethodAttributes;
+using MethodImplAttributes = System.Reflection.MethodImplAttributes;
 using TypeAttributes = System.Reflection.TypeAttributes;
 using TypeReference = FishLib.TypeReference;
 
@@ -119,6 +120,13 @@ public static class Genlib
         if (!modified) return;
         stream.Position = 0;
         asm.Write(stream);
+        var remainder = (int)(stream.Position % 512);
+        if (remainder != 0)
+        {
+            Span<byte> pad = stackalloc byte[512 - remainder];
+            pad.Clear();
+            stream.Write(pad);
+        }
         stream.SetLength(stream.Position);
     }
 
@@ -251,10 +259,9 @@ public static class Genlib
             if (isCtor)
             {
                 var ctorSig = string.Join(",", paramTypes.Select(p => p.FullName ?? p.Name));
-                if (definedCtors.Add(ctorSig))
-                {
-                    type.DefineConstructor(attributes, CallingConventions.Standard, paramTypes);
-                }
+                if (!definedCtors.Add(ctorSig)) continue;
+                var builder = type.DefineConstructor(attributes, CallingConventions.Standard, paramTypes);
+                builder.SetImplementationFlags(MethodImplAttributes.InternalCall);
             }
             else if (Types.ContainsKey(cleanName))
             {
@@ -263,6 +270,7 @@ public static class Genlib
             else
             {
                 var builder = type.DefineMethod(cleanName, attributes);
+                builder.SetImplementationFlags(MethodImplAttributes.InternalCall);
                 var returnType = GetSystemType(meth.TypeReferenceIndex);
                 if (type.Name == "String" && (returnType == type || returnType.Name == "String"))
                 {

@@ -198,7 +198,12 @@ public class MethodEmitter
                 case Code.Stsfld:
                     EmitStaticFieldStore(instruction);
                     break;
-                case Code.Br or Code.Br_S or Code.Brfalse or Code.Brfalse_S or Code.Brtrue or Code.Brtrue_S:
+                case Code.Br or Code.Br_S or Code.Brfalse or Code.Brfalse_S or Code.Brtrue or Code.Brtrue_S
+                     or Code.Beq or Code.Beq_S or Code.Bne_Un or Code.Bne_Un_S
+                     or Code.Blt or Code.Blt_S or Code.Blt_Un or Code.Blt_Un_S
+                     or Code.Ble or Code.Ble_S or Code.Ble_Un or Code.Ble_Un_S
+                     or Code.Bgt or Code.Bgt_S or Code.Bgt_Un or Code.Bgt_Un_S
+                     or Code.Bge or Code.Bge_S or Code.Bge_Un or Code.Bge_Un_S:
                     EmitBranch(instruction);
                     break;
                 case Code.Newobj or Code.Call or Code.Callvirt:
@@ -1283,6 +1288,51 @@ public class MethodEmitter
                     Opcode = instruction.OpCode.Code is Code.Brtrue or Code.Brtrue_S
                         ? (byte)InstructionType.BNEZ
                         : (byte)InstructionType.BEZ,
+                    Parameters = new BranchArgument
+                    {
+                        Source = condReg,
+                        Offset = 0
+                    }
+                });
+                break;
+            }
+            case Code.Beq or Code.Beq_S or Code.Bne_Un or Code.Bne_Un_S
+              or Code.Blt or Code.Blt_S or Code.Blt_Un or Code.Blt_Un_S
+              or Code.Ble or Code.Ble_S or Code.Ble_Un or Code.Ble_Un_S
+              or Code.Bgt or Code.Bgt_S or Code.Bgt_Un or Code.Bgt_Un_S
+              or Code.Bge or Code.Bge_S or Code.Bge_Un or Code.Bge_Un_S:
+            {
+                var arg2 = _registers.Count > 0 ? _registers.Pop() : _loc1;
+                var arg1 = _registers.Count > 0 ? _registers.Pop() : _loc1;
+                var isFloat = arg1.Type == MachineType.F32 || arg2.Type == MachineType.F32;
+                byte cmpOp = instruction.OpCode.Code switch
+                {
+                    Code.Beq or Code.Beq_S => isFloat ? (byte)InstructionType.EQf : (byte)InstructionType.EQi,
+                    Code.Bne_Un or Code.Bne_Un_S => isFloat ? (byte)InstructionType.NEf : (byte)InstructionType.NEi,
+                    Code.Blt or Code.Blt_S or Code.Blt_Un or Code.Blt_Un_S => isFloat ? (byte)InstructionType.LTf : (byte)InstructionType.LTi,
+                    Code.Ble or Code.Ble_S or Code.Ble_Un or Code.Ble_Un_S => isFloat ? (byte)InstructionType.LTEf : (byte)InstructionType.LTEi,
+                    Code.Bgt or Code.Bgt_S or Code.Bgt_Un or Code.Bgt_Un_S => isFloat ? (byte)InstructionType.GTf : (byte)InstructionType.GTi,
+                    Code.Bge or Code.Bge_S or Code.Bge_Un or Code.Bge_Un_S => isFloat ? (byte)InstructionType.GTEf : (byte)InstructionType.GTEi,
+                    _ => (byte)InstructionType.EQi
+                };
+                _regCount = Helpers.AlignOffset(_regCount, MachineType.BOOL);
+                Register condReg = new(_regCount, MachineType.BOOL);
+                _regCount += 4;
+                _instructions.Add(new()
+                {
+                    Opcode = cmpOp,
+                    Parameters = new BinaryArgument
+                    {
+                        Destination = condReg,
+                        Source1 = arg1,
+                        Source2 = arg2
+                    }
+                });
+                var branchVmIdx = _instructions.Count;
+                _branchFixups.Add((branchVmIdx, (Instruction)instruction.Operand));
+                _instructions.Add(new()
+                {
+                    Opcode = (byte)InstructionType.BNEZ,
                     Parameters = new BranchArgument
                     {
                         Source = condReg,
